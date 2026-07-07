@@ -1448,36 +1448,27 @@ let isReplyProcessing = false;
 // 🔧 修复：并发回复处理
 // ============================================================
 function processReplyQueue() {
-  // 如果队列为空，直接返回
   if (replyQueue.length === 0) return;
   
-  // 如果正在打字，等打字结束再处理
-  if (isTyping) {
-    setTimeout(processReplyQueue, 500);
-    return;
-  }
-  
-  // 计算动态回复概率
+  // 计算概率
   const prob = calculateReplyProbability();
   const shouldReply = Math.random() < prob;
   
-  console.log("📊 回复概率:", prob, "是否回复:", shouldReply); // 👈 调试用，可以删掉
+  console.log("📊 回复概率:", prob, "是否回复:", shouldReply);
+  
+  // 不管中不中，都移除占位
+  replyQueue.shift();
   
   if (shouldReply) {
-    // 概率中了，移除占位，执行回复
-    replyQueue.shift();
-    isTyping = true;
+    // 直接回复，不判断 isTyping
     themReplyWithPause(() => {
-      isTyping = false;
-      // 继续处理队列中剩下的
+      console.log("✅ 回复完成");
       if (replyQueue.length > 0) {
         setTimeout(processReplyQueue, 500);
       }
     });
   } else {
-    // 概率没中，移除占位，不回复
-    replyQueue.shift();
-    // 继续处理队列中剩下的
+    // 不回复，继续处理队列
     if (replyQueue.length > 0) {
       setTimeout(processReplyQueue, 300);
     }

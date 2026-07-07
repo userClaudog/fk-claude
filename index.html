@@ -1181,7 +1181,7 @@ function analyzeMood(text) {
 // ============================================================
 function calculateReplyProbability() {
   const userMsgs = entries.filter(e => e.from === 'me').slice(-5);
-  if (userMsgs.length === 0) return 0.3; // 初始默认100%
+  if (userMsgs.length === 0) return 0.5; // 初始默认50%
   
   let totalScore = 0;
   let totalSweet = 0;
@@ -1200,7 +1200,6 @@ function calculateReplyProbability() {
     totalDeep += analysis.deepCount;
     totalLength += analysis.length;
     
-    // 检查最近一条消息是否在 1 小时内
     if (now - msg.ts < 60 * 60 * 1000) {
       hasRecent = true;
     }
@@ -1209,12 +1208,12 @@ function calculateReplyProbability() {
   const avgLength = totalLength / userMsgs.length;
   const avgScore = totalScore / userMsgs.length;
   
-  // 基础概率 100%
-  let probability = 1.0;
+  // 基础概率 52%
+  let probability = 0.52;
   
   // 1. 消息越长，回复概率越高（最多 +20%）
-  if (avgLength > 20) probability += 0.10;
   if (avgLength > 50) probability += 0.10;
+  if (avgLength > 100) probability += 0.10;
   
   // 2. 情感越强烈（正向或负向），回复概率越高（最多 +20%）
   if (Math.abs(avgScore) > 4) probability += 0.10;
@@ -1245,11 +1244,12 @@ function calculateReplyProbability() {
     probability -= 0.05;
   }
   
-  // 限制范围 100% ~ 100%
-  probability = Math.max(1.0, Math.min(1.0, probability));
+  // 限制范围 40% ~ 85%
+  probability = Math.max(0.4, Math.min(0.85, probability));
   
   return probability;
 }
+  
 
 function getCurrentStatus() {
   return getDynamicStatus();

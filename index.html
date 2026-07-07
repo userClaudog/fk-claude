@@ -1181,7 +1181,7 @@ function analyzeMood(text) {
 // ============================================================
 function calculateReplyProbability() {
   const userMsgs = entries.filter(e => e.from === 'me').slice(-5);
-  if (userMsgs.length === 0) return 0.3; // 初始默认30%
+  if (userMsgs.length === 0) return 0.3; // 初始默认100%
   
   let totalScore = 0;
   let totalSweet = 0;
@@ -1209,8 +1209,8 @@ function calculateReplyProbability() {
   const avgLength = totalLength / userMsgs.length;
   const avgScore = totalScore / userMsgs.length;
   
-  // 基础概率 55%
-  let probability = 0.55;
+  // 基础概率 100%
+  let probability = 1.0;
   
   // 1. 消息越长，回复概率越高（最多 +20%）
   if (avgLength > 20) probability += 0.10;
@@ -1245,8 +1245,8 @@ function calculateReplyProbability() {
     probability -= 0.05;
   }
   
-  // 限制范围 20% ~ 85%
-  probability = Math.max(0.05, Math.min(0.85, probability));
+  // 限制范围 100% ~ 100%
+  probability = Math.max(1.0, Math.min(1.0, probability));
   
   return probability;
 }

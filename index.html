@@ -1463,25 +1463,33 @@ function processReplyQueue() {
   
   console.log("📊 回复概率:", prob, "是否回复:", shouldReply);
   
-  if (shouldReply) {
-    // 概率中了，移除占位，执行回复
-    replyQueue.shift();
-    isTyping = true;
-    themReplyWithPause(() => {
-      isTyping = false;
-      // 继续处理队列中剩下的
-      if (replyQueue.length > 0) {
-        setTimeout(processReplyQueue, 500);
-      }
-    });
-  } else {
-    // 概率没中，移除占位，不回复
-    replyQueue.shift();
-    // 继续处理队列中剩下的
+  // 移除占位
+  replyQueue.shift();
+  
+  if (!shouldReply) {
+    // 不回复，继续处理队列
     if (replyQueue.length > 0) {
       setTimeout(processReplyQueue, 300);
     }
+    return;
   }
+  
+  // ===== 以下是回复逻辑（直接调用你测试成功的函数） =====
+  isTyping = true;
+  
+  // 选回复内容
+  let replyText = REPLIES[Math.floor(Math.random() * REPLIES.length)];
+  const egg = checkKeywordEasterEgg(lastUserMessage);
+  if (egg) replyText = egg;
+  
+  // 直接调用 doTypingReply（你测试成功了的）
+  doTypingReply(replyText, () => {
+    isTyping = false;
+    console.log("✅ 回复完成");
+    if (replyQueue.length > 0) {
+      setTimeout(processReplyQueue, 500);
+    }
+  });
 }
 function doTypingReply(message, onComplete) {
   showTyping();

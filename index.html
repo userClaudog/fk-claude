@@ -1209,7 +1209,7 @@ function calculateReplyProbability() {
   const avgLength = totalLength / userMsgs.length;
   const avgScore = totalScore / userMsgs.length;
   
-  // 基础概率 55%
+  // 基础概率 100%
   let probability = 0.55;
   
   // 1. 消息越长，回复概率越高（最多 +20%）
@@ -1245,7 +1245,7 @@ function calculateReplyProbability() {
     probability -= 0.05;
   }
   
-  // 限制范围 20% ~ 85%
+  // 限制范围 100% ~ 100%
   probability = Math.max(0.05, Math.min(0.85, probability));
   
   return probability;
